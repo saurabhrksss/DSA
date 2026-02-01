@@ -3,37 +3,42 @@ class Solution {
     vector<int>left;
     vector<int>right;
     unordered_map<int,int>mp;
-    int ans=0;
-    void recleft(int index,int sum)
-    {
-        int n=left.size();
-        if(index==n)
-        {
-            mp[sum]++;
-            return;
-        }
-        recleft(index+1,sum);
-        recleft(index+1,sum+left[index]);
-    }
-    void recright(int index,int sum,int k)
-    {
-        int n=right.size();
-        if(index==n)
-        {
-            ans=ans+mp[k-sum];
-            return;
-        }
-        recright(index+1,sum,k);
-        recright(index+1,sum+right[index],k);
-    }
     int countSubset(vector<int> &arr, int k) {
         // code here
         int n=arr.size();
         int mid=n/2;
         left.assign(arr.begin(),arr.begin()+mid);
         right.assign(arr.begin()+mid,arr.end());
-        recleft(0,0);
-        recright(0,0,k);
+        int ans=0;
+        int leftsize=left.size();
+        int rightsize=right.size();
+        
+        int totalsubset=1<<leftsize;
+        for(int mask=0;mask<totalsubset;mask++)
+        {
+            int sum=0;
+            for(int i=0;i<leftsize;i++)
+            {
+                if(mask & (1<<i))
+                {
+                    sum+=left[i];
+                }
+            }
+            mp[sum]++;
+        }
+        int totalcount=1<<rightsize;
+        for(int mask=0;mask<totalcount;mask++)
+        {
+            int sum=0;
+            for(int i=0;i<rightsize;i++)
+            {
+                if(mask & (1<<i))
+                {
+                    sum+=right[i];
+                }
+            }
+            ans=ans+mp[k-sum];
+        }
         return ans;
     }
 };
